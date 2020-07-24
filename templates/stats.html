@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="description" content="Learn more about the spread of covid-19 and use our coronavirus testing center map to find resources near you.">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static',filename='img/favicon.png')  }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/pace.css') }}">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Covid-19 Information and Testing</title>
+    <!-- CSS -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600%7CRoboto:400" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static',filename='vendors/material-icons/material-icons.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static',filename='vendors/mono-social-icons/monosocialiconsfont.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static',filename='vendors/feather-icons/feather.css') }}" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.7.0/css/perfect-scrollbar.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/2.1.25/daterangepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static',filename='css/style.css')}}" rel="stylesheet" type="text/css">
+    <!-- Head Libs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key="></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gmaps.js/0.4.25/gmaps.min.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-164573275-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-164573275-1');
+    </script>
+
+    <script data-pace-options='{ "ajax": false, "selectors": [ "img" ]}' src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+    <style type="text/css">
+    .death-info, .death-hover-info:hover, .death-info {
+    color: #ff3333 !important;
+    }
+    .gmap {
+      width: 100%;
+      height: 500px;
+
+      .overlay {
+        background: $primary;
+        border-radius: 5px;
+        color: #fff;
+        padding: em(15,15);
+        position: relative;
+        font-family: $headings-font-family;
+        font-size: em(15,11);
+        z-index: 1;
+        transform: translateY(em(-20));
+
+        &:before {
+          z-index: 2;
+          @include size(0);
+          border-style: solid;
+          border-width: 10px 10px 0 10px;
+          border-color: $primary transparent transparent transparent;
+          display: block;
+          content: "";
+          @include position(absolute, null 50% 0 null);
+          transform: translateX(50%) translateY(100%);
+        }
+      }
+    }
+    </style>
+    <script type="text/javascript">
+      var x = {{data.x|tojson}}
+      var y = {{data.y|tojson}}
+    </script>
+    <script src="/static/js/custom.js"></script>
+</head>
+
+<body class="sidebar-horizontal sidebar-dark pace-done">
+    <div id="wrapper" class="wrapper">
+        <!-- HEADER & TOP NAVIGATION -->
+        <nav class="navbar">
+            <!-- Logo Area -->
+            <div class="navbar-header">
+                <a href="index.html" class="navbar-brand">
+                    <img class="logo-expand" alt="" src="/static/img/logo-dark.png">
+                    <img class="logo-collapse" alt="" src="/static/img/logo-collapse.png">
+                    <!-- <p>BonVue</p> -->
+                </a>
+            </div>
+            <!-- /.navbar-header -->
+            <!-- Left Menu & Sidebar Toggle -->
+            <ul class="nav navbar-nav">
+                <li class="sidebar-toggle dropdown"><a href="javascript:void(0)" class="ripple"><i class="feather feather-menu list-icon fs-20"></i></a>
+                </li>
+            </ul>
+            <!-- /.navbar-left -->
+            <!-- Search Form -->
+            <!-- /.navbar-search -->
+            <div class="spacer"></div>
+            <!-- Right Menu -->
+
+            <!-- /.navbar-right -->
+            <!-- User Image with Dropdown -->
+    <!-- /.navbar-nav -->
+    </nav>
+    <!-- /.navbar -->
+    <div class="content-wrapper">
+        <!-- SIDEBAR -->
+        <aside class="site-sidebar scrollbar-enabled" data-suppress-scroll-x="true">
+            <!-- User Details -->
+            <div class="side-user d-none">
+                <div class="col-sm-12 text-center p-0 clearfix">
+                    <div class="d-inline-block pos-relative mr-b-10">
+                        <figure class="thumb-sm mr-b-0 user--online">
+                            <img src="/static/demo/users/user1.jpg" class="rounded-circle" alt="">
+                        </figure><a href="page-profile.html" class="text-muted side-user-link"><i class="feather feather-settings list-icon"></i></a>
+                    </div>
+                    <!-- /.d-inline-block -->
+                    <div class="lh-14 mr-t-5"><a href="page-profile.html" class="hide-menu mt-3 mb-0 side-user-heading fw-500">Scott Adams</a>
+                        <br><small class="hide-menu">Developer</small>
+                    </div>
+                </div>
+                <!-- /.col-sm-12 -->
+            </div>
+            <!-- /.side-user -->
+            <!-- Call to Action -->
+
+            <!-- Sidebar Menu -->
+            <nav class="sidebar-nav">
+                <ul class="nav in side-menu">
+                    <li class="current-page menu-item"><a href="/"> <span class="hide-menu">Home</span></a>
+                    </li>
+                    <li class="current-page menu-item"><a href="/testing"> <span class="hide-menu">Testing Information</span></a>
+                    </li>
+                    <li class="current-page menu-item"><a href="/stats"> <span class="hide-menu">Statistics</span></a>
+                    </li>
+                    <li class="current-page menu-item"><a href="https://blog.support-locals.org"> <span class="hide-menu">Blog</span></a>
+                    </li>
+                </ul>
+                <!-- /.side-menu -->
+            </nav>
+            <!-- /.sidebar-nav -->
+        </aside>
+        <!-- /.site-sidebar -->
+        <main class="main-wrapper clearfix">
+            <!-- Page Title Area -->
+            <div class="row page-title clearfix">
+                <div class="page-title-left">
+                    <h6 class="page-title-heading mr-0 mr-r-5">Dashboard</h6>
+                    <p class="page-title-description mr-0 d-none d-md-inline-block">statistics, charts and events</p>
+                </div>
+                <!-- /.page-title-left -->
+                <div class="page-title-right d-none d-sm-inline-flex">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">Home</li>
+                    </ol>
+                </div>
+                <!-- /.page-title-right -->
+            </div>
+
+            <!-- =================================== -->
+            <!-- Different data widgets ============ -->
+            <!-- =================================== -->
+            <div class="widget-list row">
+                <div class="widget-holder widget-sm col-md-3 widget-full-height">
+                    <div class="widget-bg">
+                        <div class="widget-body">
+                            <div class="counter-w-info media">
+                                <div class="media-body">
+                                    <p class="text-muted mr-b-5">Confirmed Cases</p><span class="counter-title color-primary"><span class="counter">{{data.cases}}</span> </span>
+                                    <!-- /.counter-title --> 
+                                </div>
+                                <!-- /.media-body -->
+
+                            </div>
+                            <!-- /.counter-w-info -->
+                        </div>
+                        <!-- /.widget-body -->
+                    </div>
+                    <!-- /.widget-bg -->
+                </div>
+                <!-- /.widget-holder -->
+                <div class="widget-holder widget-sm col-md-3 widget-full-height">
+                    <div class="widget-bg">
+                        <div class="widget-body">
+                            <div class="counter-w-info media">
+                                <div class="media-body">
+                                    <p class="text-muted mr-b-5">Total Deaths</p><span class="counter-title death-info"><span class="counter">{{data.deaths}}</span></span>
+                                    <!-- /.counter-title -->
+                                </div>
+                                <!-- /.media-body -->
+
+                            </div>
+                            <!-- /.counter-w-info -->
+                        </div>
+                        <!-- /.widget-body -->
+                    </div>
+                    <!-- /.widget-bg -->
+                </div>
+                <!-- /.widget-holder -->
+                <div class="widget-holder widget-sm col-md-3 widget-full-height">
+                    <div class="widget-bg">
+                        <div class="widget-body">
+                            <div class="counter-w-info media">
+                                <div class="media-body">
+                                    <p class="text-muted mr-b-5">Total Recoveries</p><span class="counter-title color-green"><span class="counter">{{data.recoveries}}</span> </span>
+                                    <!-- /.counter-title -->
+
+                                </div>
+                                <!-- /.media-body -->
+
+                            </div>
+                            <!-- /.counter-w-info -->
+                        </div>
+                        <!-- /.widget-body -->
+                    </div>
+                    <!-- /.widget-bg -->
+                </div>
+                <!-- /.widget-holder -->
+                <div class="widget-holder widget-sm col-md-3 widget-full-height" id="graph">
+                    <div class="widget-bg">
+                        <div class="widget-body">
+                            <div class="counter-w-info media">
+                                <div class="media-body">
+                                    <p class="text-muted mr-b-5">Active Cases</p><span class="counter-title color-primary"><span class="counter">{{data.active}}</span> </span>
+                                    <!-- /.counter-title -->
+                                </div>
+                                <!-- /.media-body -->
+
+                            </div>
+                            <!-- /.counter-w-info -->
+                        </div>
+                        <!-- /.widget-body -->
+                    </div>
+                    <!-- /.widget-bg -->
+                </div>
+                <!-- /.widget-holder -->
+                <div class="widget-holder widget-full-height widget-flex col-lg-12">
+                    <div class="widget-bg">
+                        <div class="widget-heading">
+                            <h5 class="widget-title">New Cases Over Time (United States)</h5>
+                            <div class="widget-graph-info">
+                                <div class="dropdown"><a href="javascript:void(0)" class="dropdown-toggle text-muted fs-16" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+
+                                </div>
+                            </div>
+                            <!-- /.widget-graph-info -->
+                        </div>
+                        <!-- /.widget-heading -->
+                        <div class="widget-body">
+                            <div class="mr-t-10 flex-1">
+                                <div style="max-height: 270px; height: 270px">
+                                    <canvas id="chartJsNewUsers" style="height:100%"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.widget-body -->
+                    </div>
+                    <!-- /.widget-bg -->
+                </div>
+                <!-- /.widget-holder -->
+
+                <!-- /.widget-holder -->
+            </div>
+            <hr>
+            <div class="widget-list">
+                <div class="row">
+                    <div class="col-md-12 widget-holder">
+                        <div class="widget-bg">
+                            <div class="widget-body clearfix">
+                                <h5 class="box-title mr-b-0">Cases by State</h5>
+                                  <table class="table table-bordered table-striped table-responsive">
+                                    <thead>
+                                        <tr>
+                                            <th>State</th>
+                                            <th>Cases Reported</th>
+                                            <th>Death</th>
+                                            <th>Source</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                      {%for state in data.stats%}
+                                        <tr>
+                                            <td>{{state.name}}</td>
+                                            <td>{{state.cases}}</td>
+                                            <td>{{state.deaths}}</td>
+                                            <td><a href="{{state.source}}">Learn More</a></td>
+                                        </tr>
+                                      {% endfor%}
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <!-- /.widget-body -->
+                        </div>
+                        <!-- /.widget-bg -->
+                    </div>
+                    <!-- /.widget-holder -->
+                    <!-- /.widget-holder -->
+                </div>
+                <!-- /.row -->
+            </div>
+
+            <hr>
+
+
+            <!-- /.widget-list -->
+
+
+            <!-- /.widget-list -->
+        </main>
+        <!-- /.main-wrappper -->
+        <!-- RIGHT SIDEBAR -->
+        <aside class="right-sidebar scrollbar-enabled suppress-x">
+            <div class="sidebar-chat" data-plugin="chat-sidebar">
+                <div class="sidebar-chat-info">
+                    <h6 class="fs-16">Chat List</h6>
+                    <form class="mr-t-10">
+                        <div class="form-group">
+                            <input type="search" class="form-control form-control-rounded fs-13 heading-font-family pd-r-30" placeholder="Search for friends ..."> <i class="feather feather-search post-absolute pos-right vertical-center mr-3 text-muted"></i>
+                        </div>
+                    </form>
+                </div>
+                <div class="chat-list">
+                    <div class="list-group row">
+                        <a href="javascript:void(0)" class="list-group-item" data-chat-user="Julein Renvoye">
+                            <figure class="thumb-xs user--online mr-3 mr-0-rtl ml-3-rtl">
+                                <img src="/static/demo/users/user2.jpg" class="rounded-circle" alt="">
+                            </figure><span><span class="name">Gene Newman</span>  <span class="username">@gene_newman</span> </span>
+                        </a>
+                        <a href="javascript:void(0)" class="list-group-item" data-chat-user="Eddie Lebanovkiy">
+                            <figure class="thumb-xs user--online mr-3 mr-0-rtl ml-3-rtl">
+                                <img src="/static/demo/users/user3.jpg" class="rounded-circle" alt="">
+                            </figure><span><span class="name">Billy Black</span>  <span class="username">@billyblack</span> </span>
+                        </a>
+                        <a href="javascript:void(0)" class="list-group-item" data-chat-user="Cameron Moll">
+                            <figure class="thumb-xs user--online mr-3 mr-0-rtl ml-3-rtl">
+                                <img src="/static/demo/users/user5.jpg" class="rounded-circle" alt="">
+                            </figure><span><span class="name">Herbert Diaz</span>  <span class="username">@herbert</span> </span>
+                        </a>
+                        <a href="javascript:void(0)" class="list-group-item" data-chat-user="Bill S Kenny">
+                            <figure class="user--busy thumb-xs mr-3 mr-0-rtl ml-3-rtl">
+                                <img src="/static/demo/users/user4.jpg" class="rounded-circle" alt="">
+                            </figure><span><span class="name">Sylvia Harvey</span>  <span class="username">@sylvia</span> </span>
+                        </a>
+                        <a href="javascript:void(0)" class="list-group-item" data-chat-user="Trent Walton">
+                            <figure class="user--busy thumb-xs mr-3 mr-0-rtl ml-3-rtl">
+                                <img src="/static/demo/users/user6.jpg" class="rounded-circle" alt="">
+                            </figure><span><span class="name">Marsha Hoffman</span>  <span class="username">@m_hoffman</span> </span>
+                        </a>
+                        <a href="javascript:void(0)" class="list-group-item" data-chat-user="Julien Renvoye">
+                            <figure class="user--offline thumb-xs mr-3 mr-0-rtl ml-3-rtl">
+                                <img src="/static/demo/users/user7.jpg" class="rounded-circle" alt="">
+                            </figure><span><span class="name">Mason Grant</span>  <span class="username">@masongrant</span> </span>
+                        </a>
+                        <a href="javascript:void(0)" class="list-group-item" data-chat-user="Eddie Lebaovskiy">
+                            <figure class="user--offline thumb-xs mr-3 mr-0-rtl ml-3-rtl">
+                                <img src="/static/demo/users/user8.jpg" class="rounded-circle" alt="">
+                            </figure><span><span class="name">Shelly Sullivan</span>  <span class="username">@shelly</span></span>
+                        </a>
+                    </div>
+                    <!-- /.list-group -->
+                </div>
+                <!-- /.chat-list -->
+            </div>
+            <!-- /.sidebar-chat -->
+        </aside>
+        <!-- CHAT PANEL -->
+        <div class="chat-panel" hidden>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between"><a href="javascript:void(0);"><i class="feather feather-message-square text-success"></i></a>  <span class="user-name heading-font-family fw-400">John Doe</span>
+                    <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="widget-chat-activity flex-1">
+                        <div class="messages scrollbar-enabled suppress-x">
+                            <div class="message media reply">
+                                <figure class="thumb-xs2 user--online">
+                                    <a href="#">
+                                        <img src="/static/demo/users/user3.jpg" class="rounded-circle" alt="">
+                                    </a>
+                                </figure>
+                                <div class="message-body media-body">
+                                    <p>Epic Cheeseburgers come in all kind of styles.</p>
+                                </div>
+                                <!-- /.message-body -->
+                            </div>
+                            <!-- /.message -->
+                            <div class="message media">
+                                <figure class="thumb-xs2 user--online">
+                                    <a href="#">
+                                        <img src="/static/demo/users/user1.jpg" class="rounded-circle" alt="">
+                                    </a>
+                                </figure>
+                                <div class="message-body media-body">
+                                    <p>Cheeseburgers make your knees weak.</p>
+                                </div>
+                                <!-- /.message-body -->
+                            </div>
+                            <!-- /.message -->
+                            <div class="message media reply">
+                                <figure class="thumb-xs2 user--offline">
+                                    <a href="#">
+                                        <img src="/static/demo/users/user5.jpg" class="rounded-circle" alt="">
+                                    </a>
+                                </figure>
+                                <div class="message-body media-body">
+                                    <p>Cheeseburgers will never let you down.</p>
+                                    <p>They'll also never run around or desert you.</p>
+                                </div>
+                                <!-- /.message-body -->
+                            </div>
+                            <!-- /.message -->
+                            <div class="message media">
+                                <figure class="thumb-xs2 user--online">
+                                    <a href="#">
+                                        <img src="/static/demo/users/user1.jpg" class="rounded-circle" alt="">
+                                    </a>
+                                </figure>
+                                <div class="message-body media-body">
+                                    <p>A great cheeseburger is a gastronomical event.</p>
+                                </div>
+                                <!-- /.message-body -->
+                            </div>
+                            <!-- /.message -->
+                            <div class="message media reply">
+                                <figure class="thumb-xs2 user--busy">
+                                    <a href="#">
+                                        <img src="/static/demo/users/user6.jpg" class="rounded-circle" alt="">
+                                    </a>
+                                </figure>
+                                <div class="message-body media-body">
+                                    <p>There's a cheesy incarnation waiting for you no matter what you palete preferences are.</p>
+                                </div>
+                                <!-- /.message-body -->
+                            </div>
+                            <!-- /.message -->
+                            <div class="message media">
+                                <figure class="thumb-xs2 user--online">
+                                    <a href="#">
+                                        <img src="/static/demo/users/user1.jpg" class="rounded-circle" alt="">
+                                    </a>
+                                </figure>
+                                <div class="message-body media-body">
+                                    <p>If you are a vegan, we are sorry for you loss.</p>
+                                </div>
+                                <!-- /.message-body -->
+                            </div>
+                            <!-- /.message -->
+                        </div>
+                        <!-- /.messages -->
+                    </div>
+                    <!-- /.widget-chat-acitvity -->
+                </div>
+                <!-- /.card-body -->
+                <form action="javascript:void(0)" class="card-footer" method="post">
+                    <div class="d-flex justify-content-end"><i class="feather feather-plus-circle list-icon my-1 mr-3"></i>
+                        <textarea class="border-0 flex-1" rows="1" style="resize: none" placeholder="Type your message here"></textarea>
+                        <button class="btn btn-sm btn-circle bg-transparent" type="submit"><i class="feather feather-arrow-right list-icon fs-26 text-success"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.chat-panel -->
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- FOOTER -->
+
+    </div>
+    <!--/ #wrapper -->
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.2/umd/popper.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/metisMenu/2.7.0/metisMenu.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.7.0/js/perfect-scrollbar.jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/1.9.2/countUp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-circle-progress/1.2.2/circle-progress.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/2.1.25/daterangepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mithril/1.1.1/mithril.js"></script>
+    <script src="/static/vendors/theme-widgets/widgets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="/static/js/theme.js"></script>
+    <script src="/static/js/custom.js"></script>
+</body>
+
+</html>
